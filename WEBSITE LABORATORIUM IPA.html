@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIM-LAB IPA - MAN Luwu Timur</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            labGreen: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.25s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 font-sans min-h-screen flex flex-col justify-between text-slate-800 antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- HEADER & TOOLBAR -->
+  <header class="bg-emerald-800 text-white shadow-md sticky top-0 z-40 border-b border-emerald-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap justify-between items-center gap-3">
+      <!-- Logo & Title -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('beranda')">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600 border border-emerald-400/30 flex items-center justify-center shadow-inner text-amber-300">
+          <i class="fa-solid fa-flask-vial text-xl"></i>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-base md:text-lg leading-tight tracking-wide flex items-center gap-2">
+            SIM-LAB IPA 
+            <span class="bg-emerald-700/80 text-emerald-200 text-[10px] uppercase font-semibold px-2 py-0.5 rounded border border-emerald-500/30">MAN Luwu Timur</span>
+          </h1>
+          <p class="text-xs text-emerald-100 font-light hidden sm:block">Sistem Informasi & Manajemen Laboratorium IPA</p>
+        </div>
+      </div>
+
+      <!-- User Role Indicator & Admin Action -->
+      <div id="role-status-container" class="flex items-center space-x-3">
+        <div id="role-badge" class="hidden text-xs px-3 py-1.5 rounded-full font-bold flex items-center gap-1.5 shadow-sm"></div>
+        <button id="btn-login-admin" onclick="openAdminAuthModal()" class="bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-900 font-bold text-xs md:text-sm px-3.5 py-1.5 rounded-lg shadow-md transition-all duration-200 flex items-center gap-1.5">
+          <i class="fa-solid fa-user-gear"></i>
+          <span id="btn-login-admin-text">Mode Admin</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVIGATION BAR -->
+  <nav class="bg-emerald-900 text-emerald-100 shadow-lg sticky top-[61px] z-30 border-b border-emerald-950 overflow-x-auto">
+    <div class="max-w-7xl mx-auto flex space-x-1 px-3 py-1 whitespace-nowrap min-w-max">
+      <button onclick="switchTab('beranda')" class="nav-btn py-2.5 px-4 text-xs md:text-sm font-medium hover:bg-emerald-800/80 rounded-lg transition-all flex items-center gap-2 text-white bg-emerald-800/90 shadow-sm" id="btn-beranda">
+        <i class="fa-solid fa-house text-amber-400"></i> Beranda
+      </button>
+      <button onclick="switchTab('jadwal')" class="nav-btn py-2.5 px-4 text-xs md:text-sm font-medium hover:bg-emerald-800/80 rounded-lg transition-all flex items-center gap-2 text-emerald-100" id="btn-jadwal">
+        <i class="fa-solid fa-calendar-days text-emerald-400"></i> Jadwal Laboratorium
+      </button>
+      <button onclick="switchTab('layanan')" class="nav-btn py-2.5 px-4 text-xs md:text-sm font-medium hover:bg-emerald-800/80 rounded-lg transition-all flex items-center gap-2 text-emerald-100" id="btn-layanan">
+        <i class="fa-solid fa-hand-holding-hand text-emerald-400"></i> Layanan Lab
+      </button>
+      <button onclick="switchTab('alat-bahan')" class="nav-btn py-2.5 px-4 text-xs md:text-sm font-medium hover:bg-emerald-800/80 rounded-lg transition-all flex items-center gap-2 text-emerald-100" id="btn-alat-bahan">
+        <i class="fa-solid fa-vials text-emerald-400"></i> Alat & Bahan Lab
+      </button>
+      <button onclick="switchTab('dokumen')" class="nav-btn py-2.5 px-4 text-xs md:text-sm font-medium hover:bg-emerald-800/80 rounded-lg transition-all flex items-center gap-2 text-emerald-100" id="btn-dokumen">
+        <i class="fa-solid fa-folder-open text-emerald-400"></i> Dokumen & Arsip
+      </button>
+      <button id="tab-admin-panel" onclick="switchTab('admin-panel')" class="nav-btn py-2.5 px-4 text-xs md:text-sm font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 rounded-lg transition-all flex items-center gap-2 hidden shadow-md">
+        <i class="fa-solid fa-sliders"></i> Panel Kelola Admin
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-grow w-full">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- 1. BERANDA TAB -->
+    <section id="sec-beranda" class="tab-content block space-y-6 animate-fade-in">
+      
+      <!-- Hero Banner -->
+      <div class="relative bg-gradient-to-r from-emerald-900 via-emerald-800 to-slate-900 rounded-2xl p-6 md:p-10 text-white shadow-xl overflow-hidden border border-emerald-700/40">
+        <div class="absolute -right-10 -bottom-10 opacity-10 text-white pointer-events-none">
+          <i class="fa-solid fa-microscope text-[240px]"></i>
+        </div>
+        <div class="relative z-10 max-w-4xl space-y-4">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-400/20 text-amber-300 border border-amber-400/30">
+            <i class="fa-solid fa-award"></i> Sarana Penunjang Akademik Unggulan
+          </span>
+          <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-snug">
+            Selamat datang di Laboratorium IPA MAN Luwu Timur
+          </h2>
+          <p class="text-emerald-100 text-sm md:text-base leading-relaxed text-justify font-normal">
+            Laboratorium madrasah merupakan sarana penunjang akademik yang digunakan untuk kegiatan praktikum, eksperimen, penyelidikan, dan pelatihan ilmiah. Laboratorium IPA berfungsi menghubungkan teori yang dipelajari di kelas dengan pengalaman praktik, sehingga peserta didik dapat memverifikasi konsep-konsep ilmiah secara langsung. Melalui kegiatan eksperimen, pemahaman siswa menjadi lebih mendalam, bermakna, dan lebih mudah diingat.
+          </p>
+          <div class="pt-2 flex flex-wrap gap-3">
+            <button onclick="switchTab('layanan')" class="bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-lg shadow-md transition flex items-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i> Akses Layanan Lab
+            </button>
+            <button onclick="switchTab('jadwal')" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-lg border border-white/20 transition flex items-center gap-2">
+              <i class="fa-solid fa-calendar"></i> Lihat Jadwal Praktikum
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visi & Misi Section -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <!-- Visi Card -->
+        <div class="md:col-span-5 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between hover:shadow-md transition">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-xl mb-4 font-bold">
+              <i class="fa-solid fa-eye"></i>
+            </div>
+            <h3 class="text-xl font-bold text-emerald-950 mb-3 flex items-center gap-2">
+              Visi Laboratorium
+            </h3>
+            <p class="text-slate-700 italic leading-relaxed text-sm bg-slate-50 p-4 rounded-xl border border-slate-100">
+              "Menjadi laboratorium madrasah yang unggul, integratif, dan inovatif dalam mendukung pembelajaran berbasis eksperimen serta pengembangan ilmu pengetahuan dan teknologi."
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>MAN Luwu Timur</span>
+            <span class="font-semibold text-emerald-700">Terintegrasi & Inovatif</span>
+          </div>
+        </div>
+
+        <!-- Misi Card -->
+        <div class="md:col-span-7 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition">
+          <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-xl mb-4 font-bold">
+            <i class="fa-solid fa-bullseye"></i>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+            Misi Laboratorium
+          </h3>
+          <ul class="space-y-3.5 text-sm text-slate-700">
+            <li class="flex items-start space-x-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</span>
+              <span>Mendorong peserta didik untuk berpikir kritis dan ilmiah melalui kegiatan praktikum.</span>
+            </li>
+            <li class="flex items-start space-x-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</span>
+              <span>Mengintegrasikan pembelajaran teori dan praktik secara seimbang untuk memperkuat pemahaman konsep akademik peserta didik.</span>
+            </li>
+            <li class="flex items-start space-x-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</span>
+              <span>Melaksanakan kegiatan laboratorium yang berorientasi ramah lingkungan.</span>
+            </li>
+            <li class="flex items-start space-x-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">4</span>
+              <span>Menjalin kerja sama dengan berbagai pihak untuk pengembangan laboratorium yang berkelanjutan dan relevan dengan perkembangan zaman.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. JADWAL LABORATORIUM TAB -->
+    <section id="sec-jadwal" class="tab-content hidden space-y-6 animate-fade-in">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-calendar-days text-emerald-600"></i> Jadwal Penggunaan Laboratorium IPA
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">Jadwal praktikum mingguan per laboratorium beserta Guru Mata Pelajaran pengampu.</p>
+          </div>
+
+          <!-- Selector Sub-Lab Jadwal -->
+          <div class="flex items-center gap-2">
+            <button onclick="switchJadwalLab('biologi')" id="btn-jlab-biologi" class="jlab-btn text-xs px-3.5 py-2 rounded-xl font-bold bg-emerald-600 text-white shadow">
+              <i class="fa-solid fa-dna mr-1"></i> Biologi
+            </button>
+            <button onclick="switchJadwalLab('kimia')" id="btn-jlab-kimia" class="jlab-btn text-xs px-3.5 py-2 rounded-xl font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">
+              <i class="fa-solid fa-flask-vial mr-1"></i> Kimia
+            </button>
+            <button onclick="switchJadwalLab('fisika')" id="btn-jlab-fisika" class="jlab-btn text-xs px-3.5 py-2 rounded-xl font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">
+              <i class="fa-solid fa-atom mr-1"></i> Fisika
+            </button>
+          </div>
+        </div>
+
+        <!-- Section Header Table & Admin Button -->
+        <div class="flex justify-between items-center">
+          <h3 id="jadwal-title-label" class="text-base font-bold text-emerald-950 flex items-center gap-2">
+            Jadwal Laboratorium Biologi
+          </h3>
+          <div class="admin-only hidden">
+            <button onclick="openModalAddJadwal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow flex items-center gap-1.5">
+              <i class="fa-solid fa-plus"></i> Tambah Entri Jadwal
+            </button>
+          </div>
+        </div>
+
+        <!-- Interactive Schedule Table -->
+        <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-emerald-800 text-white uppercase font-bold">
+              <tr>
+                <th class="p-3">Hari</th>
+                <th class="p-3">Jam / Waktu</th>
+                <th class="p-3">Mata Pelajaran</th>
+                <th class="p-3">Kelas</th>
+                <th class="p-3">Guru Mata Pelajaran</th>
+                <th class="p-3 text-center admin-only hidden">Aksi (Admin)</th>
+              </tr>
+            </thead>
+            <tbody id="table-jadwal-body" class="divide-y divide-slate-100 text-slate-700 bg-white">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. LAYANAN LABORATORIUM TAB -->
+    <section id="sec-layanan" class="tab-content hidden space-y-6 animate-fade-in">
+      <div>
+        <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-hand-holding-hand text-emerald-600"></i> Layanan & Layanan Formulir Laboratorium
+        </h2>
+        <p class="text-xs text-slate-500 mt-1">Pilih jenis layanan di bawah ini untuk mengisi buku tamu atau mengakses formulir resmi.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+        <!-- 1. Buku Tamu (Direct Google Form Link) -->
+        <a href="https://forms.gle/3VG5Fh6aaBS82fAt8" target="_blank" rel="noopener noreferrer" class="bg-white hover:bg-emerald-50/60 p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-emerald-500 transition-all group flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl group-hover:scale-110 transition">
+              <i class="fa-solid fa-book-bookmark"></i>
+            </div>
+            <div>
+              <span class="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 rounded mb-1">Google Form</span>
+              <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-700">Buku Tamu Laboratorium</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Pencatatan statistik kehadiran siswa, guru, maupun tamu eksternal di laboratorium.</p>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-emerald-600 font-semibold">
+            <span>Buka Formulir Eksternal</span>
+            <i class="fa-solid fa-up-right-from-square text-[10px]"></i>
+          </div>
+        </a>
+
+        <!-- 2. Formulir Permintaan Penggunaan Lab -->
+        <a href="https://forms.gle/u7KvRjaAezp8FRwN6" target="_blank" rel="noopener noreferrer" class="bg-white hover:bg-blue-50/60 p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-blue-500 transition-all group flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xl group-hover:scale-110 transition">
+              <i class="fa-solid fa-file-signature"></i>
+            </div>
+            <div>
+              <span class="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-800 rounded mb-1">Google Form</span>
+              <h3 class="font-bold text-slate-900 text-base group-hover:text-blue-700">Formulir Penggunaan Lab</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Pengajuan izin reservasi ruangan laboratorium untuk kegiatan praktikum atau penelitian.</p>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-blue-600 font-semibold">
+            <span>Buka Formulir Eksternal</span>
+            <i class="fa-solid fa-up-right-from-square text-[10px]"></i>
+          </div>
+        </a>
+
+        <!-- 3. Formulir Peminjaman Alat Lab -->
+        <a href="https://forms.gle/NsAPuz85XZLP1cUGA" target="_blank" rel="noopener noreferrer" class="bg-white hover:bg-amber-50/60 p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-amber-500 transition-all group flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl group-hover:scale-110 transition">
+              <i class="fa-solid fa-microscope"></i>
+            </div>
+            <div>
+              <span class="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 rounded mb-1">Google Form</span>
+              <h3 class="font-bold text-slate-900 text-base group-hover:text-amber-700">Formulir Peminjaman Alat Lab</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Permohonan pinjam alat presisi seperti mikroskop, multimeter, atau perangkat kaca.</p>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-amber-600 font-semibold">
+            <span>Buka Formulir Eksternal</span>
+            <i class="fa-solid fa-up-right-from-square text-[10px]"></i>
+          </div>
+        </a>
+
+        <!-- 4. Formulir Permintaan Bahan Lab -->
+        <a href="https://forms.gle/QnnNEj7omnuPidi4A" target="_blank" rel="noopener noreferrer" class="bg-white hover:bg-purple-50/60 p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-purple-500 transition-all group flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center text-xl group-hover:scale-110 transition">
+              <i class="fa-solid fa-vial"></i>
+            </div>
+            <div>
+              <span class="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-800 rounded mb-1">Google Form</span>
+              <h3 class="font-bold text-slate-900 text-base group-hover:text-purple-700">Formulir Permintaan Bahan Lab</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Pengajuan stok bahan praktikum biologi & kimia (reagen, larutan, kertas saring, dll).</p>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-purple-600 font-semibold">
+            <span>Buka Formulir Eksternal</span>
+            <i class="fa-solid fa-up-right-from-square text-[10px]"></i>
+          </div>
+        </a>
+
+        <!-- 5. Formulir Laporan Kerusakan/Kehilangan Alat Lab -->
+        <a href="https://forms.gle/x4Zxm5AWhGgmyfYH6" target="_blank" rel="noopener noreferrer" class="bg-white hover:bg-rose-50/60 p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-rose-500 transition-all group flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center text-xl group-hover:scale-110 transition">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+              <span class="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-rose-100 text-rose-800 rounded mb-1">Google Form</span>
+              <h3 class="font-bold text-slate-900 text-base group-hover:text-rose-700">Laporan Kerusakan / Kehilangan</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Pelaporan resmi jika terdapat alat yang mengalami kerusakan atau hilang saat praktikum.</p>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-rose-600 font-semibold">
+            <span>Buka Formulir Eksternal</span>
+            <i class="fa-solid fa-up-right-from-square text-[10px]"></i>
+          </div>
+        </a>
+
+        <!-- 6. Formulir Kotak Saran -->
+        <a href="https://forms.gle/aaB46oxWjyyYc2KMA" target="_blank" rel="noopener noreferrer" class="bg-white hover:bg-teal-50/60 p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-teal-500 transition-all group flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center text-xl group-hover:scale-110 transition">
+              <i class="fa-solid fa-comment-dots"></i>
+            </div>
+            <div>
+              <span class="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-teal-100 text-teal-800 rounded mb-1">Google Form</span>
+              <h3 class="font-bold text-slate-900 text-base group-hover:text-teal-700">Formulir Kotak Saran</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Wadah aspirasi, kritik, dan masukan demi peningkatan kualitas pelayanan laboratorium.</p>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-teal-600 font-semibold">
+            <span>Buka Formulir Eksternal</span>
+            <i class="fa-solid fa-up-right-from-square text-[10px]"></i>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- 4. ALAT DAN BAHAN LAB TAB -->
+    <section id="sec-alat-bahan" class="tab-content hidden space-y-6 animate-fade-in">
+      <div>
+        <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-vials text-emerald-600"></i> Berkas Alat & Bahan Laboratorium
+        </h2>
+        <p class="text-xs text-slate-500 mt-1">Pilih sub-laboratorium di bawah untuk melihat dan mengunduh berkas daftar alat & bahan resmi.</p>
+      </div>
+
+      <!-- Sub-Lab Tabs Selector -->
+      <div class="flex border-b border-slate-200 space-x-2">
+        <button onclick="switchSubLab('biologi')" id="btn-sublab-biologi" class="sublab-btn py-2 px-4 text-xs font-bold border-b-2 border-emerald-600 text-emerald-700 flex items-center gap-2">
+          <i class="fa-solid fa-dna"></i> Lab Biologi
+        </button>
+        <button onclick="switchSubLab('kimia')" id="btn-sublab-kimia" class="sublab-btn py-2 px-4 text-xs font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-flask-vial"></i> Lab Kimia
+        </button>
+        <button onclick="switchSubLab('fisika')" id="btn-sublab-fisika" class="sublab-btn py-2 px-4 text-xs font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-atom"></i> Lab Fisika
+        </button>
+      </div>
+
+      <!-- Sub-Lab Uploaded Document Section -->
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-bold flex-shrink-0">
+            <i class="fa-solid fa-file-pdf"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wide">Berkas Daftar Alat & Bahan (PDF / Gambar)</h4>
+            <p id="sublab-file-status" class="text-xs text-slate-500 mt-0.5">Belum ada file resmi yang diunggah oleh Admin.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="btn-download-sublab-file" onclick="downloadSublabFile()" class="hidden text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow">
+            <i class="fa-solid fa-download"></i> Unduh Berkas
+          </button>
+          <div class="admin-only hidden">
+            <label class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold px-4 py-2.5 rounded-xl cursor-pointer transition flex items-center gap-2 shadow">
+              <i class="fa-solid fa-upload"></i> Unggah Berkas Baru
+              <input type="file" id="input-file-sublab" onchange="handleSublabFileUpload(event)" class="hidden">
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. DOKUMEN TAB -->
+    <section id="sec-dokumen" class="tab-content hidden space-y-6 animate-fade-in">
+      <div>
+        <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-folder-open text-emerald-600"></i> Dokumen & Berkas Resmi Laboratorium
+        </h2>
+        <p class="text-xs text-slate-500 mt-1">Lihat dan unduh Struktur Organisasi, Tata Tertib, SOP, LKP, serta MSDS Keselamatan Bahan.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- 1. Struktur Organisasi -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-sitemap text-emerald-600"></i> Struktur Organisasi Laboratorium
+            </h3>
+            <div class="admin-only hidden">
+              <label class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold px-2.5 py-1.5 rounded-md cursor-pointer transition flex items-center gap-1">
+                <i class="fa-solid fa-upload"></i> Unggah Berkas
+                <input type="file" class="hidden" onchange="handleDocFileUpload(event, 'doc_struktur_file', 'struktur-file-info')">
+              </label>
+            </div>
+          </div>
+          <div id="struktur-file-info" class="bg-slate-50 p-4 rounded-xl border border-slate-100 min-h-[100px] flex items-center justify-between">
+            <p class="text-xs text-slate-400">Belum ada berkas Struktur Organisasi yang diunggah Admin.</p>
+          </div>
+        </div>
+
+        <!-- 2. Tata Tertib -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-list text-emerald-600"></i> Tata Tertib Laboratorium
+            </h3>
+            <div class="admin-only hidden">
+              <label class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold px-2.5 py-1.5 rounded-md cursor-pointer transition flex items-center gap-1">
+                <i class="fa-solid fa-upload"></i> Unggah Berkas
+                <input type="file" class="hidden" onchange="handleDocFileUpload(event, 'doc_tatatertib_file', 'tatatertib-file-info')">
+              </label>
+            </div>
+          </div>
+          <div id="tatatertib-file-info" class="bg-slate-50 p-4 rounded-xl border border-slate-100 min-h-[100px] flex items-center justify-between">
+            <p class="text-xs text-slate-400">Belum ada berkas Tata Tertib yang diunggah Admin.</p>
+          </div>
+        </div>
+
+        <!-- 3. SOP Laboratorium -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-file-shield text-emerald-600"></i> Standar Operasional Prosedur (SOP)
+            </h3>
+            <div class="admin-only hidden">
+              <label class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold px-2.5 py-1.5 rounded-md cursor-pointer transition flex items-center gap-1">
+                <i class="fa-solid fa-upload"></i> Unggah Berkas
+                <input type="file" class="hidden" onchange="handleDocFileUpload(event, 'doc_sop_file', 'sop-file-info')">
+              </label>
+            </div>
+          </div>
+          <div id="sop-file-info" class="bg-slate-50 p-4 rounded-xl border border-slate-100 min-h-[100px] flex items-center justify-between">
+            <p class="text-xs text-slate-400">Belum ada dokumen SOP yang diunggah Admin.</p>
+          </div>
+        </div>
+
+        <!-- 4. Lembar Kerja Praktikum -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-book-bookmark text-emerald-600"></i> Lembar Kerja Praktikum (LKP)
+            </h3>
+            <div class="admin-only hidden">
+              <label class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold px-2.5 py-1.5 rounded-md cursor-pointer transition flex items-center gap-1">
+                <i class="fa-solid fa-upload"></i> Unggah Berkas
+                <input type="file" class="hidden" onchange="handleDocFileUpload(event, 'doc_lkp_file', 'lkp-file-info')">
+              </label>
+            </div>
+          </div>
+          <div id="lkp-file-info" class="bg-slate-50 p-4 rounded-xl border border-slate-100 min-h-[100px] flex items-center justify-between">
+            <p class="text-xs text-slate-400">Belum ada Lembar Kerja Praktikum yang diunggah Admin.</p>
+          </div>
+        </div>
+
+        <!-- 5. MSDS (Material Safety Data Sheet) -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3 md:col-span-2">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> Material Safety Data Sheet (MSDS / Lembar Keselamatan Bahan)
+            </h3>
+            <div class="admin-only hidden">
+              <label class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold px-2.5 py-1.5 rounded-md cursor-pointer transition flex items-center gap-1">
+                <i class="fa-solid fa-upload"></i> Unggah Berkas MSDS
+                <input type="file" class="hidden" onchange="handleDocFileUpload(event, 'doc_msds_file', 'msds-file-info')">
+              </label>
+            </div>
+          </div>
+          <div id="msds-file-info" class="bg-slate-50 p-4 rounded-xl border border-slate-100 min-h-[100px] flex items-center justify-between">
+            <p class="text-xs text-slate-400">Belum ada dokumen MSDS Keselamatan Bahan yang diunggah Admin.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6. PANEL ADMIN (Khusus Mode Admin) -->
+    <section id="sec-admin-panel" class="tab-content hidden space-y-6 animate-fade-in">
+      
+      <!-- Integrated Google Form/Sheet Sync Hub -->
+      <div class="bg-gradient-to-r from-emerald-900 to-slate-900 text-white rounded-2xl p-6 shadow-md border border-emerald-700/50 space-y-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div class="space-y-1">
+            <span class="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] uppercase font-extrabold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+              <i class="fa-brands fa-google"></i> Integrasi Data Google Form
+            </span>
+            <h3 class="text-lg font-bold">Sinkronisasi Respon Google Form & Spreadsheet</h3>
+            <p class="text-xs text-emerald-100">
+              Terhubung ke Tautan Spreadsheet: <span class="underline font-mono text-amber-300 break-all">https://docs.google.com/spreadsheets/d/1onsaOjEBwrDeAaZlPzYYAVSdEexj8haIlRxbB5MUxq0/edit?usp=sharing</span>
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="syncGoogleFormResponses()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2">
+              <i class="fa-solid fa-rotate"></i> Sinkronkan Data
+            </button>
+            <a href="https://docs.google.com/spreadsheets/d/1onsaOjEBwrDeAaZlPzYYAVSdEexj8haIlRxbB5MUxq0/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-4 py-2.5 rounded-xl border border-white/20 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-table"></i> Buka Spreadsheet
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase">Total Kunjungan</span>
+          <p id="stat-total-tamu" class="text-2xl font-extrabold text-slate-900 mt-1">0</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase">Tamu Biologi</span>
+          <p id="stat-count-biologi" class="text-2xl font-extrabold text-emerald-600 mt-1">0</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase">Tamu Kimia</span>
+          <p id="stat-count-kimia" class="text-2xl font-extrabold text-blue-600 mt-1">0</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase">Tamu Fisika</span>
+          <p id="stat-count-fisika" class="text-2xl font-extrabold text-amber-600 mt-1">0</p>
+        </div>
+      </div>
+
+      <!-- Rekap Buku Tamu Table -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex flex-wrap justify-between items-center gap-3">
+          <div>
+            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-address-book text-emerald-600"></i> Rekapitulasi Data Buku Tamu Laboratorium
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">Daftar riwayat kunjungan praktikan, guru, dan tamu peneliti.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="exportBukuTamuCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow">
+              <i class="fa-solid fa-file-excel"></i> Ekspor ke CSV
+            </button>
+            <button onclick="clearBukuTamu()" class="bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+              <i class="fa-solid fa-trash"></i> Bersihkan Log
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200">
+              <tr>
+                <th class="p-3">Waktu Kunjungan</th>
+                <th class="p-3">Nama Lengkap</th>
+                <th class="p-3">Kategori</th>
+                <th class="p-3">Kelas / Instansi</th>
+                <th class="p-3">Sub-Lab</th>
+                <th class="p-3">Tujuan Kunjungan</th>
+              </tr>
+            </thead>
+            <tbody id="admin-table-buku-tamu" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- MODAL: ADMIN AUTHENTICATION -->
+  <div id="modal-admin-auth" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 animate-fade-in">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-4 border border-slate-100">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+          <i class="fa-solid fa-lock text-amber-500"></i> Otentikasi Mode Admin
+        </h3>
+        <button onclick="closeModal('modal-admin-auth')" class="text-slate-400 hover:text-slate-600 text-sm">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <p class="text-xs text-slate-500 leading-relaxed">Masukkan kata sandi pengelola untuk mengaktifkan Mode Admin (Izin Edit & Unggah Data):</p>
+      
+      <form onsubmit="submitAdminAuth(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Kata Sandi Admin</label>
+          <div class="relative">
+            <input type="password" id="admin-pass-input" placeholder="Masukkan Sandi..." required class="w-full pl-3 pr-10 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            <button type="button" onclick="togglePassVisibility()" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 text-xs">
+              <i id="pass-eye-icon" class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+          <p id="admin-auth-error" class="text-[11px] text-rose-500 font-medium mt-1 hidden"></p>
+        </div>
+
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" onclick="closeModal('modal-admin-auth')" class="px-3.5 py-2 border border-slate-300 text-slate-600 rounded-lg text-xs font-semibold hover:bg-slate-50">Batal</button>
+          <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg text-xs transition shadow">Masuk Mode Admin</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT JADWAL LAB (ADMIN) -->
+  <div id="modal-add-jadwal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 animate-fade-in">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 border border-slate-100">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+          <i class="fa-solid fa-calendar-plus text-emerald-600"></i> Entri Jadwal Praktikum
+        </h3>
+        <button onclick="closeModal('modal-add-jadwal')" class="text-slate-400 hover:text-slate-600 text-sm">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form onsubmit="submitJadwalForm(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Laboratorium *</label>
+          <select id="j-sublab" required class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none">
+            <option value="biologi">Biologi</option>
+            <option value="kimia">Kimia</option>
+            <option value="fisika">Fisika</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Hari *</label>
+          <select id="j-hari" required class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none">
+            <option value="Senin">Senin</option>
+            <option value="Selasa">Selasa</option>
+            <option value="Rabu">Rabu</option>
+            <option value="Kamis">Kamis</option>
+            <option value="Jumat">Jumat</option>
+            <option value="Sabtu">Sabtu</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Jam / Waktu *</label>
+          <input type="text" id="j-waktu" placeholder="Contoh: 08.00 - 09.30 WITA" required class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Mata Pelajaran *</label>
+          <input type="text" id="j-mapel" placeholder="Contoh: Biologi / Praktikum Kimia Dasar" required class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Kelas *</label>
+          <input type="text" id="j-kelas" placeholder="Contoh: XII IPA 1" required class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Guru Mata Pelajaran *</label>
+          <input type="text" id="j-guru" placeholder="Contoh: Nurhidayah, S.Pd." required class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" onclick="closeModal('modal-add-jadwal')" class="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg font-semibold hover:bg-slate-50">Batal</button>
+          <button type="submit" class="px-4 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700 transition shadow">Simpan Jadwal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+      
+      <!-- Logo + Graduated Cylinder Icon + Lab Name -->
+      <div class="flex items-center space-x-4">
+        <!-- Graduated Cylinder SVG Icon -->
+        <div class="w-12 h-12 rounded-xl bg-emerald-950/80 border border-emerald-500/30 flex items-center justify-center p-2 text-emerald-400 shadow-inner flex-shrink-0">
+          <svg class="w-full h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 2h6" />
+            <path d="M10 2v17a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V2" />
+            <path d="M10 6h2" />
+            <path d="M10 10h3" />
+            <path d="M10 14h2" />
+            <path d="M10 18h3" />
+            <path d="M7 21h10" />
+            <path d="M10 14.5c1.5 0 2.5-.8 4-0.5V19a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-4.5z" fill="currentColor" fill-opacity="0.3" stroke="none" />
+          </svg>
+        </div>
+        <div class="space-y-1">
+          <h4 class="font-extrabold text-white text-base leading-tight">Laboratorium IPA MAN Luwu Timur</h4>
+          <p class="text-slate-400 text-xs font-normal">
+            Jl. Dr. Sam Ratulangi, Komplek Perum BTN Wija Virgo, Puncak Indah, Malili
+          </p>
+        </div>
+      </div>
+
+      <div class="text-center md:text-right space-y-1">
+        <p class="font-semibold text-slate-300">&copy; 2026 SIM-LAB IPA MAN Luwu Timur. Hak Cipta Dilindungi.</p>
+        <p class="text-[11px] text-slate-500">Sistem Manajemen & Pelayanan Terpadu Sains Madrasah</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // --- GLOBAL APPLICATION STATE ---
+    let isAdmin = false;
+    const ADMIN_PASSWORD = "MAN LUWU TIMUR";
+
+    let activeSubLab = 'biologi';
+    let activeJadwalLab = 'biologi';
+
+    const DEFAULT_SPREADSHEET_CSV = "https://docs.google.com/spreadsheets/d/1onsaOjEBwrDeAaZlPzYYAVSdEexj8haIlRxbB5MUxq0/export?format=csv";
+
+    // Default Schedule Data per Laboratory
+    const defaultJadwalData = {
+      biologi: [
+        { id: 1, hari: 'Senin', waktu: '08.00 - 09.30 WITA', mapel: 'Biologi', kelas: 'X IPA 1', guru: 'Nurhidayah, S.Pd.' },
+        { id: 2, hari: 'Rabu', waktu: '10.00 - 11.30 WITA', mapel: 'Praktikum Anatomi Tumbuhan', kelas: 'XI IPA 2', guru: 'Dra. Hajah Fatimah' }
+      ],
+      kimia: [
+        { id: 3, hari: 'Selasa', waktu: '08.45 - 10.15 WITA', mapel: 'Kimia Larutan Asam Basa', kelas: 'XI IPA 1', guru: 'Rahmat R., S.Si.' },
+        { id: 4, hari: 'Kamis', waktu: '13.00 - 14.30 WITA', mapel: 'Stokiometri & Reaksi Redoks', kelas: 'X IPA 2', guru: 'Rahmat R., S.Si.' }
+      ],
+      fisika: [
+        { id: 5, hari: 'Rabu', waktu: '08.00 - 09.30 WITA', mapel: 'Fisika Optik & Gelombang', kelas: 'XII IPA 1', guru: 'Ahmad Dahlan, M.Pd.' },
+        { id: 6, hari: 'Jumat', waktu: '09.00 - 10.30 WITA', mapel: 'Rangkaian Listrik Searah', kelas: 'XI IPA 3', guru: 'Ahmad Dahlan, M.Pd.' }
+      ]
+    };
+
+    let state = {
+      jadwalData: {},
+      sublabFiles: {},
+      docFiles: {},
+      bukuTamuLogs: []
+    };
+
+    // --- INITIALIZATION ---
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Load Schedule Data
+      const savedJadwal = localStorage.getItem('simlab_jadwal_data');
+      if (savedJadwal) {
+        try { state.jadwalData = JSON.parse(savedJadwal); }
+        catch(e) { state.jadwalData = defaultJadwalData; }
+      } else {
+        state.jadwalData = defaultJadwalData;
+        localStorage.setItem('simlab_jadwal_data', JSON.stringify(defaultJadwalData));
+      }
+
+      // 2. Load SubLab File Info
+      ['biologi', 'kimia', 'fisika'].forEach(key => {
+        const saved = localStorage.getItem(`sublab_file_${key}`);
+        if (saved) {
+          try { state.sublabFiles[key] = JSON.parse(saved); } catch(e){}
+        }
+      });
+
+      // 3. Load Document Files Info
+      ['doc_struktur_file', 'doc_tatatertib_file', 'doc_sop_file', 'doc_lkp_file', 'doc_msds_file'].forEach(key => {
+        const saved = localStorage.getItem(key);
+        if (saved) {
+          try { state.docFiles[key] = JSON.parse(saved); } catch(e){}
+        }
+      });
+
+      // 4. Load Buku Tamu Logs
+      const savedLogs = localStorage.getItem('buku_tamu_logs');
+      if (savedLogs) {
+        try { state.bukuTamuLogs = JSON.parse(savedLogs); } catch(e){}
+      }
+
+      // Render initial view
+      renderJadwalTable();
+      renderSubLabFileDisplay();
+      renderAllDocFiles();
+      renderBukuTamuTable();
+      updateAdminMetrics();
+      updateAdminUI();
+
+      // Auto-fetch spreadsheet if online
+      if (navigator.onLine) {
+        syncGoogleFormResponses();
+      }
+    });
+
+    // --- NAVIGATION TAB SWITCHER ---
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-emerald-800/90', 'text-white', 'shadow-sm');
+        btn.classList.add('text-emerald-100');
+      });
+
+      const activeSection = document.getElementById(`sec-${tabId}`);
+      if (activeSection) {
+        activeSection.classList.remove('hidden');
+      }
+
+      const activeBtn = document.getElementById(`btn-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-emerald-800/90', 'text-white', 'shadow-sm');
+        activeBtn.classList.remove('text-emerald-100');
+      }
+    }
+
+    function openModal(id) {
+      document.getElementById(id)?.classList.remove('hidden');
+    }
+    function closeModal(id) {
+      document.getElementById(id)?.classList.add('hidden');
+    }
+
+    // --- TOAST NOTIFICATIONS ---
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      const bgColor = type === 'success' ? 'bg-emerald-800 border-emerald-600' : 'bg-rose-800 border-rose-600';
+      const icon = type === 'success' ? 'fa-circle-check text-emerald-300' : 'fa-circle-exclamation text-rose-300';
+
+      toast.className = `${bgColor} text-white px-4 py-3 rounded-xl shadow-xl border text-xs flex items-center gap-2.5 transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto max-w-sm`;
+      toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i><span>${message}</span>`;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 50);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // --- ADMIN AUTHENTICATION ---
+    function openAdminAuthModal() {
+      if (isAdmin) {
+        isAdmin = false;
+        updateAdminUI();
+        showToast('Anda telah keluar dari Mode Admin.', 'success');
+      } else {
+        document.getElementById('admin-pass-input').value = '';
+        document.getElementById('admin-auth-error').classList.add('hidden');
+        openModal('modal-admin-auth');
+      }
+    }
+
+    function togglePassVisibility() {
+      const passInput = document.getElementById('admin-pass-input');
+      const eyeIcon = document.getElementById('pass-eye-icon');
+      if (passInput.type === 'password') {
+        passInput.type = 'text';
+        eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        passInput.type = 'password';
+        eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+      }
+    }
+
+    function submitAdminAuth(e) {
+      e.preventDefault();
+      const inputPass = document.getElementById('admin-pass-input').value;
+      const errorEl = document.getElementById('admin-auth-error');
+
+      if (inputPass === ADMIN_PASSWORD) {
+        isAdmin = true;
+        closeModal('modal-admin-auth');
+        updateAdminUI();
+        showToast('Mode Admin Aktif! Izin Edit & Unggah Berkas Terbuka.', 'success');
+      } else {
+        errorEl.innerText = 'Kata sandi salah! Pastikan menggunakan kata sandi resmi.';
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    function updateAdminUI() {
+      const roleBadge = document.getElementById('role-badge');
+      const btnAdminText = document.getElementById('btn-login-admin-text');
+      const btnAdmin = document.getElementById('btn-login-admin');
+      const tabAdmin = document.getElementById('tab-admin-panel');
+      const adminOnlyEls = document.querySelectorAll('.admin-only');
+
+      if (isAdmin) {
+        roleBadge.className = 'bg-amber-500 text-slate-950 text-xs px-3 py-1.5 rounded-full font-bold flex items-center gap-1.5 shadow-sm';
+        roleBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-slate-950 animate-ping"></span> Mode: Admin Pengelola`;
+        roleBadge.classList.remove('hidden');
+
+        btnAdminText.innerText = 'Keluar Admin';
+        btnAdmin.className = 'bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs md:text-sm px-3.5 py-1.5 rounded-lg shadow-md transition-all duration-200 flex items-center gap-1.5';
+
+        tabAdmin.classList.remove('hidden');
+        adminOnlyEls.forEach(el => el.classList.remove('hidden'));
+      } else {
+        roleBadge.classList.add('hidden');
+        roleBadge.innerHTML = '';
+
+        btnAdminText.innerText = 'Mode Admin';
+        btnAdmin.className = 'bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-900 font-bold text-xs md:text-sm px-3.5 py-1.5 rounded-lg shadow-md transition-all duration-200 flex items-center gap-1.5';
+
+        tabAdmin.classList.add('hidden');
+        adminOnlyEls.forEach(el => el.classList.add('hidden'));
+
+        // Switch back to home if currently on admin tab
+        const adminSec = document.getElementById('sec-admin-panel');
+        if (adminSec && !adminSec.classList.contains('hidden')) {
+          switchTab('beranda');
+        }
+      }
+
+      renderJadwalTable();
+      renderSubLabFileDisplay();
+      renderAllDocFiles();
+    }
+
+    // --- JADWAL LABORATORIUM LOGIC ---
+    function switchJadwalLab(sublabKey) {
+      activeJadwalLab = sublabKey;
+      document.querySelectorAll('.jlab-btn').forEach(btn => {
+        btn.classList.remove('bg-emerald-600', 'text-white', 'shadow');
+        btn.classList.add('bg-slate-100', 'text-slate-600');
+      });
+
+      const activeBtn = document.getElementById(`btn-jlab-${sublabKey}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-emerald-600', 'text-white', 'shadow');
+        activeBtn.classList.remove('bg-slate-100', 'text-slate-600');
+      }
+
+      const titleMap = {
+        biologi: 'Jadwal Laboratorium Biologi',
+        kimia: 'Jadwal Laboratorium Kimia',
+        fisika: 'Jadwal Laboratorium Fisika'
+      };
+      document.getElementById('jadwal-title-label').innerText = titleMap[sublabKey] || 'Jadwal Laboratorium';
+
+      renderJadwalTable();
+    }
+
+    function renderJadwalTable() {
+      const tbody = document.getElementById('table-jadwal-body');
+      if (!tbody) return;
+
+      const list = state.jadwalData[activeJadwalLab] || [];
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="${isAdmin ? 6 : 5}" class="p-6 text-center text-slate-400">Belum ada entri jadwal praktikum untuk laboratorium ini.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map((item, idx) => `
+        <tr class="hover:bg-slate-50 border-b border-slate-100">
+          <td class="p-3 font-bold text-slate-900">${item.hari}</td>
+          <td class="p-3 font-semibold text-emerald-700">${item.waktu}</td>
+          <td class="p-3 font-bold text-slate-800">${item.mapel}</td>
+          <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold text-[11px]">${item.kelas}</span></td>
+          <td class="p-3 font-semibold text-slate-700">${item.guru}</td>
+          ${isAdmin ? `
+            <td class="p-3 text-center admin-only">
+              <button onclick="deleteJadwalEntry('${activeJadwalLab}', ${idx})" class="text-rose-600 hover:text-rose-800 text-xs font-bold p-1">
+                <i class="fa-solid fa-trash"></i> Hapus
+              </button>
+            </td>
+          ` : ''}
+        </tr>
+      `).join('');
+    }
+
+    function openModalAddJadwal() {
+      document.getElementById('j-sublab').value = activeJadwalLab;
+      document.getElementById('j-waktu').value = '';
+      document.getElementById('j-mapel').value = '';
+      document.getElementById('j-kelas').value = '';
+      document.getElementById('j-guru').value = '';
+      openModal('modal-add-jadwal');
+    }
+
+    function submitJadwalForm(e) {
+      e.preventDefault();
+      const sublab = document.getElementById('j-sublab').value;
+      const newEntry = {
+        id: Date.now(),
+        hari: document.getElementById('j-hari').value,
+        waktu: document.getElementById('j-waktu').value,
+        mapel: document.getElementById('j-mapel').value,
+        kelas: document.getElementById('j-kelas').value,
+        guru: document.getElementById('j-guru').value
+      };
+
+      if (!state.jadwalData[sublab]) state.jadwalData[sublab] = [];
+      state.jadwalData[sublab].push(newEntry);
+
+      localStorage.setItem('simlab_jadwal_data', JSON.stringify(state.jadwalData));
+      closeModal('modal-add-jadwal');
+      switchJadwalLab(sublab);
+      showToast('Entri jadwal baru berhasil ditambahkan!', 'success');
+    }
+
+    function deleteJadwalEntry(sublabKey, index) {
+      if (!isAdmin) return;
+      if (state.jadwalData[sublabKey]) {
+        state.jadwalData[sublabKey].splice(index, 1);
+        localStorage.setItem('simlab_jadwal_data', JSON.stringify(state.jadwalData));
+        renderJadwalTable();
+        showToast('Entri jadwal berhasil dihapus.', 'success');
+      }
+    }
+
+    // --- SUB-LAB FILE HANDLING ---
+    function switchSubLab(sublabKey) {
+      activeSubLab = sublabKey;
+      document.querySelectorAll('.sublab-btn').forEach(btn => {
+        btn.classList.remove('border-emerald-600', 'text-emerald-700', 'font-bold');
+        btn.classList.add('border-transparent', 'text-slate-500', 'font-medium');
+      });
+
+      const activeBtn = document.getElementById(`btn-sublab-${sublabKey}`);
+      if (activeBtn) {
+        activeBtn.classList.add('border-emerald-600', 'text-emerald-700', 'font-bold');
+        activeBtn.classList.remove('border-transparent', 'text-slate-500', 'font-medium');
+      }
+
+      renderSubLabFileDisplay();
+    }
+
+    function handleSublabFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const sizeKb = (file.size / 1024).toFixed(1);
+      const sizeStr = file.size > 1024 * 1024 ? (file.size / (1024 * 1024)).toFixed(2) + ' MB' : sizeKb + ' KB';
+
+      const fileMeta = {
+        name: file.name,
+        size: sizeStr,
+        date: new Date().toLocaleDateString('id-ID')
+      };
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        fileMeta.content = evt.target.result;
+        state.sublabFiles[activeSubLab] = fileMeta;
+        try {
+          localStorage.setItem(`sublab_file_${activeSubLab}`, JSON.stringify(fileMeta));
+        } catch(err){}
+        renderSubLabFileDisplay();
+        showToast(`Berkas daftar alat/bahan ${activeSubLab.toUpperCase()} berhasil diunggah!`, 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function renderSubLabFileDisplay() {
+      const fileMeta = state.sublabFiles[activeSubLab];
+      const statusEl = document.getElementById('sublab-file-status');
+      const dlBtn = document.getElementById('btn-download-sublab-file');
+
+      if (statusEl && dlBtn) {
+        if (fileMeta) {
+          statusEl.innerText = `File: ${fileMeta.name} (${fileMeta.size}) - Diunggah ${fileMeta.date}`;
+          dlBtn.classList.remove('hidden');
+        } else {
+          statusEl.innerText = 'Belum ada file resmi yang diunggah oleh Admin.';
+          dlBtn.classList.add('hidden');
+        }
+      }
+    }
+
+    function downloadSublabFile() {
+      const fileMeta = state.sublabFiles[activeSubLab];
+      if (!fileMeta) return;
+
+      const a = document.createElement('a');
+      a.href = fileMeta.content;
+      a.download = fileMeta.name;
+      a.click();
+    }
+
+    // --- DOCUMENT FILE HANDLING (STRUKTUR, TATA TERTIB, SOP, LKP, MSDS) ---
+    function handleDocFileUpload(e, storageKey, containerId) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const sizeKb = (file.size / 1024).toFixed(1);
+      const sizeStr = file.size > 1024 * 1024 ? (file.size / (1024 * 1024)).toFixed(2) + ' MB' : sizeKb + ' KB';
+
+      const docObj = {
+        name: file.name,
+        size: sizeStr,
+        date: new Date().toLocaleDateString('id-ID')
+      };
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        docObj.content = evt.target.result;
+        state.docFiles[storageKey] = docObj;
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(docObj));
+        } catch(err){}
+        renderDocFileDisplay(storageKey, containerId);
+        showToast(`Berkas ${file.name} berhasil diunggah!`, 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function renderDocFileDisplay(storageKey, containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const docObj = state.docFiles[storageKey];
+
+      if (docObj) {
+        container.innerHTML = `
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl font-bold flex-shrink-0">
+              <i class="fa-solid fa-file-pdf"></i>
+            </div>
+            <div>
+              <p class="font-bold text-slate-800 text-xs">${docObj.name}</p>
+              <p class="text-[10px] text-slate-400">Ukuran: ${docObj.size} | Diunggah: ${docObj.date}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="downloadDocFile('${storageKey}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow">
+              <i class="fa-solid fa-download"></i> Unduh
+            </button>
+            ${isAdmin ? `
+              <button onclick="deleteDocFile('${storageKey}', '${containerId}')" class="bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            ` : ''}
+          </div>
+        `;
+      } else {
+        container.innerHTML = `<p class="text-xs text-slate-400">Belum ada berkas yang diunggah Admin.</p>`;
+      }
+    }
+
+    function downloadDocFile(storageKey) {
+      const docObj = state.docFiles[storageKey];
+      if (!docObj) return;
+
+      const a = document.createElement('a');
+      a.href = docObj.content;
+      a.download = docObj.name;
+      a.click();
+      showToast(`Mengunduh ${docObj.name}...`, 'success');
+    }
+
+    function deleteDocFile(storageKey, containerId) {
+      if (!isAdmin) return;
+      delete state.docFiles[storageKey];
+      localStorage.removeItem(storageKey);
+      renderDocFileDisplay(storageKey, containerId);
+      showToast('Berkas dokumen berhasil dihapus.', 'success');
+    }
+
+    function renderAllDocFiles() {
+      const containerMap = {
+        'doc_struktur_file': 'struktur-file-info',
+        'doc_tatatertib_file': 'tatatertib-file-info',
+        'doc_sop_file': 'sop-file-info',
+        'doc_lkp_file': 'lkp-file-info',
+        'doc_msds_file': 'msds-file-info'
+      };
+
+      Object.keys(containerMap).forEach(key => {
+        renderDocFileDisplay(key, containerMap[key]);
+      });
+    }
+
+    // --- GOOGLE SPREADSHEET AUTOMATIC SYNC LOGIC ---
+    async function syncGoogleFormResponses() {
+      try {
+        const response = await fetch(DEFAULT_SPREADSHEET_CSV);
+        if (!response.ok) throw new Error('Gagal mengambil CSV Google Sheet');
+
+        const csvText = await response.text();
+        const parsedRows = parseCSV(csvText);
+
+        if (parsedRows.length > 1) {
+          state.bukuTamuLogs = parsedRows.slice(1).map(row => ({
+            waktu: row[0] || new Date().toLocaleString('id-ID'),
+            nama: row[1] || 'Anonim',
+            kategori: row[2] || 'Pengunjung',
+            kelas: row[3] || '-',
+            sublab: row[4] || 'Biologi',
+            tujuan: row[5] || 'Praktikum'
+          }));
+
+          localStorage.setItem('buku_tamu_logs', JSON.stringify(state.bukuTamuLogs));
+          renderBukuTamuTable();
+          updateAdminMetrics();
+          showToast(`Sinkronisasi berhasil! ${state.bukuTamuLogs.length} data diperbarui.`, 'success');
+        }
+      } catch (err) {
+        showToast('Sinkronisasi otomatis gagal. Menggunakan data lokal.', 'error');
+      }
+    }
+
+    function parseCSV(text) {
+      const lines = text.split('\n');
+      return lines.map(line => {
+        const result = [];
+        let cur = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+          const c = line[i];
+          if (c === '"') {
+            inQuotes = !inQuotes;
+          } else if (c === ',' && !inQuotes) {
+            result.push(cur.trim());
+            cur = '';
+          } else {
+            cur += c;
+          }
+        }
+        result.push(cur.trim());
+        return result;
+      }).filter(row => row.some(cell => cell.length > 0));
+    }
+
+    function renderBukuTamuTable() {
+      const tbody = document.getElementById('admin-table-buku-tamu');
+      if (!tbody) return;
+
+      if (state.bukuTamuLogs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Belum ada riwayat data kunjungan.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = state.bukuTamuLogs.map(g => `
+        <tr class="hover:bg-slate-50 border-b border-slate-100">
+          <td class="p-3 text-slate-500 text-[11px]">${g.waktu}</td>
+          <td class="p-3 font-bold text-slate-900">${g.nama}</td>
+          <td class="p-3 font-semibold text-slate-700">${g.kategori}</td>
+          <td class="p-3 text-slate-600">${g.kelas}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">${g.sublab}</span></td>
+          <td class="p-3 text-slate-600 max-w-xs truncate">${g.tujuan}</td>
+        </tr>
+      `).join('');
+    }
+
+    function updateAdminMetrics() {
+      const logs = state.bukuTamuLogs;
+      document.getElementById('stat-total-tamu').innerText = logs.length;
+
+      const countBio = logs.filter(l => (l.sublab || '').toLowerCase().includes('biologi')).length;
+      const countKim = logs.filter(l => (l.sublab || '').toLowerCase().includes('kimia')).length;
+      const countFis = logs.filter(l => (l.sublab || '').toLowerCase().includes('fisika')).length;
+
+      document.getElementById('stat-count-biologi').innerText = countBio;
+      document.getElementById('stat-count-kimia').innerText = countKim;
+      document.getElementById('stat-count-fisika').innerText = countFis;
+    }
+
+    function clearBukuTamu() {
+      if (!isAdmin) return;
+      state.bukuTamuLogs = [];
+      localStorage.setItem('buku_tamu_logs', JSON.stringify([]));
+      renderBukuTamuTable();
+      updateAdminMetrics();
+      showToast('Data riwayat buku tamu telah dibersihkan.', 'success');
+    }
+
+    function exportBukuTamuCSV() {
+      if (state.bukuTamuLogs.length === 0) {
+        showToast('Tidak ada data kunjungan untuk diekspor.', 'error');
+        return;
+      }
+
+      let csv = 'Waktu,Nama Lengkap,Kategori,Kelas/Instansi,Sub-Lab,Tujuan Kunjungan\n';
+      state.bukuTamuLogs.forEach(g => {
+        csv += `"${g.waktu}","${g.nama}","${g.kategori}","${g.kelas}","${g.sublab}","${g.tujuan}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `Rekap_Buku_Tamu_SIMLAB_MAN_Luwu_Timur_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('File CSV berhasil diunduh!', 'success');
+    }
+  </script>
+</body>
+</html>
